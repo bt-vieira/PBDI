@@ -25,7 +25,7 @@ Router.post('/', function(req, res, next) {
     mysqlConnection.query("insert into Produto_Comprado\
     values ('"+req.body.nota_fiscal+"', "+req.body.cod_produto+",\
     "+req.body.quantidade+","+req.body.valor+");", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -35,7 +35,7 @@ Router.post('/delete', function(req, res, next) {
         mysqlConnection.query("DELETE from produto_comprado\
          where nota_fiscal = '"+req.body.nota_fiscal+"' and\
         cod_prod = '"+req.body.cod_prod+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

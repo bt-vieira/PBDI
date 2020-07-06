@@ -27,7 +27,7 @@ Router.put('/edit', function(req, res, next) {
      cidade = '"+req.body.cidade+"',\
      CEP = '"+req.body.CEP+"'\
      where id_endereco = '"+req.body.id_end+"';", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -44,7 +44,7 @@ Router.post('/', function(req, res, next) {
                 id_end = rows1[0].id;
                 mysqlConnection.query("insert into Pessoa Values('"+req.body.CPF+"','"+req.body.nome+"',"+id_end+","+id_tel+",\
                 '"+req.body.genero+"','"+req.body.data_nasc+"');", function (error, results, fields) {
-                    if(error) throw error;
+                    if(error) res.status(400).send(JSON.stringify(results));
                     res.send(JSON.stringify(results));
                 });
             })
@@ -56,7 +56,7 @@ Router.post('/', function(req, res, next) {
 Router.post('/delete', function(req, res, next) {
     try{
         mysqlConnection.query("DELETE from pessoa where CPF = '"+req.body.CPF+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

@@ -15,7 +15,7 @@ Router.get('/', (req, res)=>{
 
 Router.post('/', function(req, res, next) {
     mysqlConnection.query("insert into associacao values('"+req.body.CPF+"','"+req.body.CNPJ+"');", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -25,7 +25,7 @@ Router.post('/delete', function(req, res, next) {
     try{
         mysqlConnection.query("DELETE from associacao where CPF = '"+req.body.CPF+"' and\
         CNPJ = '"+req.body.CNPJ+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

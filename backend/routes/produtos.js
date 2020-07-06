@@ -18,7 +18,7 @@ Router.put('/edit', function(req, res, next) {
     descricao='"+req.body.descricao+"', tipo='"+req.body.tipo+"',\
     forma='"+req.body.forma+"', validade='"+req.body.validade+"',\
     preco = '"+req.body.preco+"' where cod_produto = '"+req.body.cod_produto+"';", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -26,7 +26,7 @@ Router.put('/edit', function(req, res, next) {
 Router.post('/', function(req, res, next) {
     mysqlConnection.query("Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('"+req.body.nome+"','"+req.body.descricao+"',\
     '"+req.body.tipo+"','"+req.body.forma+"',"+req.body.preco+",'"+req.body.validade+"');", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -36,7 +36,7 @@ Router.post('/delete', function(req, res, next) {
 
     try{
         mysqlConnection.query("DELETE from produto where cod_produto = '"+req.body.cod_produto+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

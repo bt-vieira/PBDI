@@ -16,7 +16,7 @@ Router.get('/', (req, res)=>{
 
 Router.post('/', function(req, res, next) {
     mysqlConnection.query("insert into fabricante values('"+req.body.CNPJ+"');", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -32,7 +32,7 @@ Router.put('/edit', function(req, res, next) {
      cidade = '"+req.body.cidade+"',\
      CEP = '"+req.body.CEP+"'\
      where id_endereco = '"+req.body.id_end+"';", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -40,7 +40,7 @@ Router.put('/edit', function(req, res, next) {
 Router.post('/delete', function(req, res, next) {
     try{
         mysqlConnection.query("DELETE from fabricante where CNPJ = '"+req.body.CNPJ+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

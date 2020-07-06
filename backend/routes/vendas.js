@@ -26,7 +26,7 @@ Router.get('/:nota', (req, res)=>{
 Router.post('/', function(req, res, next) {
     mysqlConnection.query("Insert into compra values('"+req.body.nota_fiscal+"',\
     '"+req.body.CPF_funcionario+"','"+req.body.CPF_cliente+"','"+req.body.data_compra+"',"+req.body.valor+");", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -34,7 +34,7 @@ Router.post('/', function(req, res, next) {
 Router.post('/delete', function(req, res, next) {
     try{
         mysqlConnection.query("DELETE from compra where nota_fiscal = '"+req.body.nota_fiscal+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

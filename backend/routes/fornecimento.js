@@ -25,7 +25,7 @@ Router.get('/:nota', (req, res)=>{
 Router.post('/', function(req, res, next) {
     mysqlConnection.query("Insert into fornecimento values('"+req.body.CNPJ+"',\
     "+req.body.cod_prod+",'"+req.body.nota_fiscal+"','"+req.body.data_compra+"', "+req.body.valor+", "+req.body.quantidade+");", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -36,7 +36,7 @@ Router.post('/delete', function(req, res, next) {
          where CNPJ = '"+req.body.CNPJ+"' and\
         cod_prod = '"+req.body.cod_prod+"' and\
         nota_fiscal = '"+req.body.nota_fiscal+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}

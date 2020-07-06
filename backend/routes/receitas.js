@@ -22,7 +22,7 @@ Router.post('/', function(req, res, next) {
     '"+req.body.subscricao+"');\
     insert into inscricao values('"+req.body.CPF_prof+"','"+req.body.CPF_pessoa+"','"+req.body.data_prescricao+"',\
     '"+req.body.nome_farmaco+"', '"+req.body.forma+"','"+req.body.concentracao+"');", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -37,7 +37,7 @@ Router.put('/edit', function(req, res, next) {
       nome_farmaco = '"+req.body.nome_farmaco+"', forma = '"+req.body.forma+"'\
     where CPF_pessoa = '"+req.body.CPF_pessoa+"' and CPF_prof = '"+req.body.CPF_prof+"'\
      and data_pres = '"+req.body.data_prescricao+"';", function (error, results, fields) {
-        if(error) throw error;
+        if(error) res.status(400).send(JSON.stringify(results));
         res.send(JSON.stringify(results));
     });
 });
@@ -46,7 +46,7 @@ Router.post('/delete', function(req, res, next) {
     try{
         mysqlConnection.query("DELETE from prescricao where CPF_pessoa = '"+req.body.CPF_pessoa+"' and CPF_prof = '"+req.body.CPF_prof+"'\
         and data_prescricao = '"+req.body.data_prescricao+"';", function (error, results, fields) {
-            if(error) throw error;
+            if(error) res.status(400).send(JSON.stringify(results));
             res.send(JSON.stringify(results));
         });
     }catch{}
