@@ -3,9 +3,10 @@ const mysqlConnection = require('../connection');
 const Router = express.Router();
 
 Router.get('/', (req, res)=>{
-    mysqlConnection.query('Select empresa.CNPJ, nome_empresa, cidade, endereco.rua, endereco.numero as numero_rua, telefone.numero \
-    FROM fabricante, empresa, endereco, telefone\
-    Where fabricante.CNPJ = empresa.CNPJ and telefone.id_telefone = empresa.id_tel and endereco.id_endereco = empresa.id_end;',(err, rows, fields)=>{
+    mysqlConnection.query('select distinct *, telefone.numero as telefone, endereco.numero as numero\
+     from fabricante, empresa, endereco, telefone\
+     where fabricante.CNPJ = empresa.CNPJ and empresa.id_tel = id_telefone\
+     and empresa.id_end = id_endereco group by empresa.CNPJ;',(err, rows, fields)=>{
         if(!err)
             res.send(JSON.stringify(rows));
         else
@@ -13,15 +14,35 @@ Router.get('/', (req, res)=>{
     });
 });
 
-Router.get('/:cpf', (req, res)=>{
-    mysqlConnection.query('SELECT * from funcionario WHERE CPF = ?',
-    [req.params.cpf],
-    (err, rows, fields)=>{
-        if(!err)
-            res.send(rows);
-        else
-            console.log(err);
+Router.post('/', function(req, res, next) {
+    mysqlConnection.query("insert into fabricante values('"+req.body.CNPJ+"');", function (error, results, fields) {
+        if(error) throw error;
+        res.send(JSON.stringify(results));
     });
 });
 
+Router.put('/edit', function(req, res, next) {
+    mysqlConnection.query("update empresa\
+     set nome_empresa = '"+req.body.nome_empresa+"'\
+     where CNPJ = '"+req.body.CNPJ+"';\
+     Update telefone set numero = '"+req.body.telefone+"'\
+     where id_telefone = '"+req.body.id_tel+"';\
+     Update endereco set rua = '"+req.body.rua+"',\
+     numero ='"+req.body.numero+"',\
+     cidade = '"+req.body.cidade+"',\
+     CEP = '"+req.body.CEP+"'\
+     where id_endereco = '"+req.body.id_end+"';", function (error, results, fields) {
+        if(error) throw error;
+        res.send(JSON.stringify(results));
+    });
+});
+
+Router.post('/delete', function(req, res, next) {
+    try{
+        mysqlConnection.query("DELETE from fabricante where CNPJ = '"+req.body.CNPJ+"';", function (error, results, fields) {
+            if(error) throw error;
+            res.send(JSON.stringify(results));
+        });
+    }catch{}
+});
 module.exports = Router;

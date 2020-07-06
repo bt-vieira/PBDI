@@ -16,15 +16,40 @@ Router.get('/', (req, res)=>{
     });
 });
 
-Router.get('/:cpf', (req, res)=>{
-    mysqlConnection.query('SELECT * from funcionario WHERE CPF = ?',
-    [req.params.cpf],
-    (err, rows, fields)=>{
-        if(!err)
-            res.send(rows);
-        else
-            console.log(err);
+Router.post('/', function(req, res, next) {
+    mysqlConnection.query("Insert into prescricao values('"+req.body.CPF_prof+"','"+req.body.CPF_pessoa+"',\
+    '"+req.body.data_prescricao+"','"+req.body.adscricao+"',\
+    '"+req.body.subscricao+"');\
+    insert into inscricao values('"+req.body.CPF_prof+"','"+req.body.CPF_pessoa+"','"+req.body.data_prescricao+"',\
+    '"+req.body.nome_farmaco+"', '"+req.body.forma+"','"+req.body.concentracao+"');", function (error, results, fields) {
+        if(error) throw error;
+        res.send(JSON.stringify(results));
     });
+});
+
+Router.put('/edit', function(req, res, next) {
+    mysqlConnection.query("update prescricao set adscricao = '"+req.body.adscricao+"',\
+     subscricao = '"+req.body.subscricao+"' \
+     where CPF_pessoa = '"+req.body.CPF_pessoa+"'\
+     and CPF_prof = '"+req.body.CPF_prof+"'\
+     and data_prescricao = '"+req.body.data_prescricao+"';\
+    update inscricao set concentracao = '"+req.body.concentracao+"',\
+      nome_farmaco = '"+req.body.nome_farmaco+"', forma = '"+req.body.forma+"'\
+    where CPF_pessoa = '"+req.body.CPF_pessoa+"' and CPF_prof = '"+req.body.CPF_prof+"'\
+     and data_pres = '"+req.body.data_prescricao+"';", function (error, results, fields) {
+        if(error) throw error;
+        res.send(JSON.stringify(results));
+    });
+});
+
+Router.post('/delete', function(req, res, next) {
+    try{
+        mysqlConnection.query("DELETE from prescricao where CPF_pessoa = '"+req.body.CPF_pessoa+"' and CPF_prof = '"+req.body.CPF_prof+"'\
+        and data_prescricao = '"+req.body.data_prescricao+"';", function (error, results, fields) {
+            if(error) throw error;
+            res.send(JSON.stringify(results));
+        });
+    }catch{}
 });
 
 module.exports = Router;

@@ -42,8 +42,8 @@ CREATE TABLE Pessoa(
     genero char(1) NOT NULL,
     data_nasc DATE NOT NULL,
     PRIMARY KEY(CPF),
-    CONSTRAINT `fk_endereco` FOREIGN KEY (`id_end`) REFERENCES `Endereco`(`id_endereco`) ON DELETE RESTRICT,
-    CONSTRAINT `fk_tel_pessoa` FOREIGN KEY (`id_tel`) REFERENCES `Telefone`(`id_telefone`) ON DELETE RESTRICT
+    CONSTRAINT `fk_endereco` FOREIGN KEY (`id_end`) REFERENCES `Endereco`(`id_endereco`) ON DELETE CASCADE,
+    CONSTRAINT `fk_tel_pessoa` FOREIGN KEY (`id_tel`) REFERENCES `Telefone`(`id_telefone`) ON DELETE CASCADE
 );
 
 
@@ -54,7 +54,7 @@ CREATE TABLE Funcionario(
     Salario DECIMAL(7,2) NOT NULL,
     PRIMARY KEY(CPF),
     UNIQUE(CTPS),
-    CONSTRAINT `fk_cpf` FOREIGN KEY(`CPF`) REFERENCES `pessoa`(`CPF`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cpf` FOREIGN KEY(`CPF`) REFERENCES `pessoa`(`CPF`) ON DELETE CASCADE
 );
 
 CREATE TABLE Farmaceutico(
@@ -62,7 +62,7 @@ CREATE TABLE Farmaceutico(
     CRF char(5) NOT NULL,
     PRIMARY KEY(CPF),
     UNIQUE(CRF),
-    CONSTRAINT `fk_cpf_farm` FOREIGN KEY(`CPF`) REFERENCES `funcionario`(`CPF`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cpf_farm` FOREIGN KEY(`CPF`) REFERENCES `funcionario`(`CPF`) ON DELETE CASCADE
 );
 
 CREATE TABLE Horario_Funcionamento(
@@ -85,11 +85,10 @@ CREATE TABLE Trabalha(
 CREATE TABLE Profissional(
 	CPF varchar(14) NOT NULL,
     especialidade varchar(40) NOT NULL,
-	assinatura varchar(100) NOT NULL,
     registro varchar(13) NOT NULL,
     PRIMARY KEY(CPF),
     UNIQUE(registro),
-    CONSTRAINT `fk_cpf_prof` FOREIGN KEY(`CPF`) REFERENCES `Pessoa`(`CPF`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cpf_prof` FOREIGN KEY(`CPF`) REFERENCES `Pessoa`(`CPF`) ON DELETE CASCADE
 );
 
 CREATE TABLE Local_De_Trabalho(
@@ -98,7 +97,7 @@ CREATE TABLE Local_De_Trabalho(
     nome_local varchar(150) NOT NULL,
     PRIMARY KEY(CPF,id_end),
     CONSTRAINT `fk_cpf_local` FOREIGN KEY(`CPF`) REFERENCES `Profissional`(`CPF`) ON DELETE CASCADE,
-    CONSTRAINT `fk_end_local` FOREIGN KEY(`id_end`) REFERENCES `endereco`(`id_endereco`) ON DELETE RESTRICT
+    CONSTRAINT `fk_end_local` FOREIGN KEY(`id_end`) REFERENCES `endereco`(`id_endereco`) ON DELETE CASCADE
 );
 
 CREATE TABLE Prescricao(
@@ -129,15 +128,15 @@ CREATE TABLE Empresa(
     id_end int unsigned NOT NULL,
     id_tel int unsigned NOT NULL,
     PRIMARY KEY(CNPJ),
-    CONSTRAINT `fk_end_empresa` FOREIGN KEY(`id_end`) REFERENCES `Endereco`(`id_endereco`) ON DELETE RESTRICT,
-    CONSTRAINT `fk_tel_empresa` FOREIGN KEY(`id_tel`) REFERENCES `Telefone`(`id_telefone`) ON DELETE RESTRICT
+    CONSTRAINT `fk_end_empresa` FOREIGN KEY(`id_end`) REFERENCES `Endereco`(`id_endereco`) ON DELETE CASCADE,
+    CONSTRAINT `fk_tel_empresa` FOREIGN KEY(`id_tel`) REFERENCES `Telefone`(`id_telefone`) ON DELETE CASCADE
 );
 
 CREATE TABLE Empresa_Conveniada(
 	CNPJ varchar(18) NOT NULL,
-    porcentagem_desc DECIMAL(2,0) NOT NULL,
+    porcentagem_desc DECIMAL(3,0) NOT NULL,
     PRIMARY KEY(CNPJ),
-    CONSTRAINT `fk_cnpj_conv` FOREIGN KEY(`CNPJ`) REFERENCES `Empresa`(`CNPJ`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cnpj_conv` FOREIGN KEY(`CNPJ`) REFERENCES `Empresa`(`CNPJ`) ON DELETE CASCADE
 );
 
 CREATE TABLE Associacao(
@@ -151,7 +150,7 @@ CREATE TABLE Associacao(
 CREATE TABLE Fabricante(
 	CNPJ varchar(18) NOT NULL,
     PRIMARY KEY(CNPJ),
-    CONSTRAINT `fk_cnpj_fab` FOREIGN KEY(`CNPJ`) REFERENCES `Empresa`(`CNPJ`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cnpj_fab` FOREIGN KEY(`CNPJ`) REFERENCES `Empresa`(`CNPJ`) ON DELETE CASCADE
 );
 
 CREATE TABLE Produto(
@@ -174,8 +173,8 @@ CREATE TABLE Fornecimento(
     valor DECIMAL(7,2) NOT NULL,
     quantidade int unsigned NOT NULL,
     PRIMARY KEY(CNPJ,cod_prod,nota_fiscal),
-    CONSTRAINT `fk_cnpj_forn` FOREIGN KEY(`CNPJ`) REFERENCES `Fabricante`(`CNPJ`) ON DELETE RESTRICT,
-    CONSTRAINT `fk_codprod_forn` FOREIGN KEY(`cod_prod`) REFERENCES `Produto`(`cod_produto`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cnpj_forn` FOREIGN KEY(`CNPJ`) REFERENCES `Fabricante`(`CNPJ`) ON DELETE CASCADE,
+    CONSTRAINT `fk_codprod_forn` FOREIGN KEY(`cod_prod`) REFERENCES `Produto`(`cod_produto`) ON DELETE CASCADE
 );
 
 CREATE TABLE Compra(
@@ -185,8 +184,8 @@ CREATE TABLE Compra(
     data_compra DATETIME NOT NULL,
     valor DECIMAL(7,2) NOT NULL,
     PRIMARY KEY(nota_fiscal),
-    CONSTRAINT `fk_cpffun_compra` FOREIGN KEY(`CPF_funcionario`) REFERENCES `Funcionario`(`CPF`) ON DELETE RESTRICT,
-    CONSTRAINT `fk_cpfcli_compra` FOREIGN KEY(`CPF_cliente`) REFERENCES `Pessoa`(`CPF`) ON DELETE RESTRICT
+    CONSTRAINT `fk_cpffun_compra` FOREIGN KEY(`CPF_funcionario`) REFERENCES `Funcionario`(`CPF`) ON DELETE CASCADE,
+    CONSTRAINT `fk_cpfcli_compra` FOREIGN KEY(`CPF_cliente`) REFERENCES `Pessoa`(`CPF`) ON DELETE CASCADE
 );
 
 CREATE TABLE Produto_Comprado(
@@ -196,7 +195,7 @@ CREATE TABLE Produto_Comprado(
     valor DECIMAL(5,2) NOT NULL,
     PRIMARY KEY(nota_fiscal,cod_prod),
     CONSTRAINT `fk_nota_prodcom` FOREIGN KEY(`nota_fiscal`) REFERENCES `Compra`(`nota_fiscal`) ON DELETE CASCADE,
-    CONSTRAINT `fk_codprod_prodcom` FOREIGN KEY(`cod_prod`) REFERENCES `Produto`(`cod_produto`) ON DELETE RESTRICT
+    CONSTRAINT `fk_codprod_prodcom` FOREIGN KEY(`cod_prod`) REFERENCES `Produto`(`cod_produto`) ON DELETE CASCADE
 );
 
 INSERT INTO Telefone(numero) VALUES('+5514998888644');
@@ -241,14 +240,12 @@ insert into Endereco(cidade,rua,numero,cep) VALUES('Bauru','Av. Eng. Luís Edmun
 insert into Endereco(cidade,rua,numero,cep) VALUES('Bauru','Rua Rio Branco',2040,'17014-037');
 insert into Endereco(cidade,rua,numero,cep) VALUES('São Paulo','Avenida Paulista',1776,'01310-200');
 insert into Endereco(cidade,rua,numero,cep) VALUES('Bauru','Avenida Duque de Caxias',1165,'17012-151');
-Select * FROM Endereco;
 
 INSERT INTO Telefone(numero) VALUES('+5514998888888');
 INSERT INTO Telefone(numero) VALUES('+5514999876543');
 INSERT INTO Telefone(numero) VALUES('+5514991234567');
 INSERT INTO Telefone(numero) VALUES('+5514994561237');
 INSERT INTO Telefone(numero) VALUES('+5514999999999');
-Select * FROM Telefone;
 
 insert into Pessoa Values('938.413.988-20','Martin Gustavo Caleb',1,3,'M','2000-03-03');
 insert into Pessoa Values('001.894.540-67','Eduarda Elisa Teresinha Fernandes',2,2,'F','1966-12-01');
@@ -257,8 +254,8 @@ insert into Pessoa Values('044.941.340-31','Catarina Sophia Gabrielly Castro',3,
 insert into Pessoa Values('411.677.528-21','Fernanda Giovana Aurora Monteiro',4,4,'F','1983-11-11');
 insert into Pessoa Values('206.860.420-50','Maria Medi',1,2,'F','1995-12-15');
 
-Insert into profissional values('411.677.528-21','Psiquiatra','','12345');
-Insert into profissional values('206.860.420-50','Neurologia','','54404');
+Insert into profissional values('411.677.528-21','Psiquiatra','12345');
+Insert into profissional values('206.860.420-50','Neurologia','54404');
 
 Insert Into horario_funcionamento values('terca',8,18);
 Insert Into horario_funcionamento values('quarta',8,18);
@@ -286,10 +283,6 @@ Insert into trabalha values('913.359.220-91','quarta',8,18);
 Insert into trabalha values('044.941.340-31','sabado',8,16);
 Insert into trabalha values('044.941.340-31','domingo',8,12);
 
-Select * From Escala_de_trabalho;
-
-Select * From Pessoa, Funcionario where Pessoa.CPF = Funcionario.CPF;
-
 Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('Diazepam','Produz um efeito calmante','Receituário','Drágea',30.00,'2021-10-01');
 Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('Metilfenidato','Estimulante leve do sistema nervoso central','Receituário','Drágea',119.99,'2021-01-01');
 Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('Carbonato de lítio','Estabilizador do humor','Receituário','Comprimido',99.99,'2022-02-05');
@@ -301,15 +294,11 @@ Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('Hidro
 Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('Acetato de Dexametasona','Anti-inflamatório','Genéricos','Pomada',15.00,'2020-09-09');
 Insert into Produto(nome, descricao, tipo, forma, preco, validade) values('Cloridrato de Nafazolina + Sulfato de Zinco','Solução oftalmológica','Genéricos','Colírio',10.00,'2022-01-09');
 
-Select * from Produto;
-
 Insert into empresa values('71.514.877/0001-49','Genericas S&A',3,1);
 Insert into empresa values('41.970.267/0001-99','Farmais',1,2);
 Insert into empresa values('30.906.419/0001-78','Monsant',2,3);
 Insert into empresa values('82.123.912/0001-15','Convens',5,4);
 Insert into empresa values('57.274.773/0001-83','Payer',4,5);
-
-Select * from empresa;
 
 Insert into fabricante values('71.514.877/0001-49');
 Insert into fabricante values('30.906.419/0001-78');
@@ -334,37 +323,7 @@ insert into inscricao values('411.677.528-21','435.088.088-74','2020-07-05','Dia
 'Drágea','10mg');
 
 Insert into empresa_conveniada values('82.123.912/0001-15',10);
+Insert into empresa_conveniada values('25.768.496/0001-79',20);
 
-/*READ geral de convenios*/
-select * from empresa, empresa_conveniada where empresa.CNPJ = empresa_conveniada.CNPJ;
-
-/*READ geral de receitas*/
-select prescricao.CPF_prof, prescricao.CPF_pessoa, a.nome as paciente, b.nome as profissional,
-prescricao.data_prescricao, prescricao.adscricao, prescricao.subscricao, inscricao.nome_farmaco,
-inscricao.forma, inscricao.concentracao from prescricao, inscricao, pessoa as a, pessoa as b 
-where prescricao.CPF_pessoa = inscricao.CPF_pessoa and prescricao.CPF_prof = inscricao.CPF_prof 
-and prescricao.data_prescricao = inscricao.data_pres and a.CPF = prescricao.CPF_pessoa 
-and b.CPF = prescricao.CPF_prof;
-
-/*READ de Farmacia */
-select * from empresa, endereco, telefone where empresa.CNPJ = '25.768.496/0001-79' 
-and empresa.id_end = endereco.id_endereco and telefone.id_telefone = empresa.id_tel;
-
-/*READ geral de vendas*/
-select nota_fiscal, CPF_funcionario, CPF_cliente, a.nome as cliente, b.nome as funcionario,
-data_compra, valor from compra, pessoa as a, pessoa as b 
-where a.CPF = compra.CPF_cliente and b.CPF = compra.CPF_funcionario;
-
-/*READ geral dos clientes*/
-select * from compra, pessoa where compra.CPF_cliente = pessoa.CPF;
-
-/*READ Fabricantes*/
-Select empresa.CNPJ, nome_empresa, cidade, endereco.rua, endereco.numero as numero_rua, telefone.numero 
-FROM fabricante, empresa, endereco, telefone
-Where fabricante.CNPJ = empresa.CNPJ and telefone.id_telefone = empresa.id_tel and endereco.id_endereco = empresa.id_end;
-/*READ Produtos*/
-SELECT * FROM produto LEFT JOIN (Select cod_prod, sum(quantidade) as total from fornecimento group by cod_prod) as a
-ON produto.cod_produto = a.cod_prod;
-
-/*READ geral Medicos*/
-Select * from profissional, pessoa where profissional.CPF = pessoa.CPF;
+Insert into associacao values('206.860.420-50','82.123.912/0001-15');
+Insert into associacao values('435.088.088-74','25.768.496/0001-79');
